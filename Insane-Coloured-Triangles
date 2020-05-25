@@ -1,0 +1,35 @@
+/**
+	 * 3 màu R,G,B
+	 * Màu của dòng tiếp theo được tạo bằng cách xét 2 màu kề nhau của dòng trước
+	 * Với 2 màu giống nhau, màu của dòng tiếp theo sẽ cùng màu 
+	 * Với 2 màu khác nhau, thì màu của dòng tiếp theo sẽ là màu còn lại 
+	 *  **/
+	static char[] values = new char[255];
+    static {
+        values['R' + 'G'] = 'B';
+        values['R' + 'B'] = 'G';
+        values['B' + 'G'] = 'R';
+        values['G' + 'G'] = 'G';
+        values['R' + 'R'] = 'R';
+        values['B' + 'B'] = 'B';
+    }
+    
+    /**
+     * a  b  c  d     n,size = 4
+     *  ab bc cd      size = 3
+     *     . .		  size = 2
+     *      .         size = 1
+     * Nhận thấy: 
+     * - Input với n màu sẽ tạo ra n-1 dòng cần xử lý, và mỗi dòng sẽ mất đi 1 màu so với dòng trước (1)
+     * - Với mỗi dòng có số màu là size thì ta sẽ xử lý size-1 cặp màu.                              (2)
+     * - Kết quả cuối cùng sẽ nằm ở size = 1, khi chỉ còn 1 màu duy nhất                             (3)
+     * **/
+    public static char triangle(final String row) {
+        char[] result = row.toCharArray();
+        for (int size = result.length; size > 1; size--) {        //(1)
+            for (int i = 0; i < size - 1; i++) {                  //(2)
+                result[i] = values[result[i] + result[i + 1]];
+            }
+        }
+        return result[0];                                         //(3)
+    }
