@@ -45,7 +45,7 @@ public class ConnectMySQL {
 		return false;
 	}
 	
-	// Delete data from database
+	// Update data from database
 	public boolean updateInOut(In_Out io1, In_Out io2) {
 		String sql = "UPDATE tbldata1 SET Input = ?, Output = ?, DateTime = ?"
 				+ " WHERE Input = '"+io1.getInput()+"' AND Output = '"+io1.getOutput()+"' "
