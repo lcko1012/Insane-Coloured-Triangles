@@ -103,9 +103,10 @@ public class InOutView extends JFrame {
 				list.add(io);
 				if(new ConnectMySQL().addInOut(io) == true) {
 					JOptionPane.showMessageDialog(rootPane, "Add Success!");
+					ShowResult();
 				}
 				else JOptionPane.showMessageDialog(rootPane, "Not Success!");
-				ShowResult();
+				
 			}
 		});
 		btnResult.setFont(new Font("Tahoma", Font.PLAIN, 15));
