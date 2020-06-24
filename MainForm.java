@@ -214,7 +214,7 @@ public class MainForm extends JFrame {
 				
 				boolean check = true;
 				
-				if(tfIn.getText().equals(null)) {
+				if(tfIn.getText().equals("")) {
 					check = false;
 				}
 				
