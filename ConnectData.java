@@ -17,6 +17,9 @@ public class ConnectData {
 
 	private Connection connect;
 	
+	/**
+	 *  Hàm thực hiện kết nối đến cơ sở dữ liệu trong mySQL
+	 */
 	public ConnectData() {
 		
 		final String url = "jdbc:mysql://localhost:3306/test";
@@ -33,19 +36,24 @@ public class ConnectData {
 		}
 	}
 	
-	
+	/**
+	 * Hàm thực hiện lấy dữ liệu từ cơ sở dữ liệu đổ lên bảng hiển thị Lịch sử
+	 * @param table
+	 * @param tableModel
+	 */
 	public void GetData(JTable table,DefaultTableModel tableModel) {
-		String sql = "SELECT * FROM tbldata1";
+		String sql = "SELECT * FROM tbldata1 WHERE Flag = 1";	// Câu truy vấn dùng để hiển thị những thông tin có trường Flag = 1 
+																// (Flag là trường hiển thị dữ liệu được phép hiện trên bảng lịch sử hay không)
 		try {
 			PreparedStatement sm = connect.prepareStatement(sql);
 			ResultSet rs = sm.executeQuery();
-			int i = 1;
+			int i = 1; // Biến i dùng để đánh số thự tự các bản ghi
 			while(rs.next()) {
 				String row[] = new String[5];
-				row[0] = Integer.toString(i);
-				row[1] = rs.getString(1);
-				row[2] = rs.getString(2);
-				row[3] = rs.getString(3);
+				row[0] = Integer.toString(i);	// Cột số thứ tự
+				row[1] = rs.getString(1);  	// Cột Input
+				row[2] = rs.getString(2);	// Cột Output
+				row[3] = rs.getString(3);	// Cột ngày giờ truy cập
 				tableModel.addRow(row);
 				i++;
 			}
@@ -54,9 +62,13 @@ public class ConnectData {
 		}
 	}
 	
-	// Add new data into database
+	/**
+	 * Hàm thêm mới một bản ghi
+	 * @param io
+	 * @return
+	 */
 		public boolean addInOut(InOut io) {
-			String sql = "INSERT INTO tbldata1() VALUES(?, ?, ?)";
+			String sql = "INSERT INTO tbldata1() VALUES(?, ?, ?, 1)";
 			try {
 				PreparedStatement ps = connect.prepareStatement(sql);
 				ps.setString(1, io.getInput());
@@ -69,6 +81,12 @@ public class ConnectData {
 			return false;
 		}
 		
+		/**
+		 * Hàm cập nhật lại thông tin bản ghi
+		 * @param io1
+		 * @param io2
+		 * @return
+		 */
 		public boolean updateInOut(InOut io1, InOut io2) {
 			String sql = "UPDATE tbldata1 SET Input = ?, Output = ?, DateTime = ?"
 					+ " WHERE Input = '"+io1.getInput()+"' AND Output = '"+io1.getOutput()+"' "
@@ -86,8 +104,14 @@ public class ConnectData {
 			return false;
 		}
 		
+		/**
+		 * Hàm xóa "mềm" một bản ghi
+		 * (Chỉ cập nhật lại biến Flag = 0)
+		 * @param io
+		 * @return
+		 */
 		public boolean deleteInOut(InOut io) {
-			String sql = "DELETE FROM tbldata1 WHERE Input = ? and Output = ? and DateTime = ?";
+			String sql = "UPDATE tbldata1 SET Flag = 0 WHERE Input = ? and Output = ? and DateTime = ?";
 			try {
 				PreparedStatement ps = connect.prepareStatement(sql);
 				ps.setString(1, io.getInput());
