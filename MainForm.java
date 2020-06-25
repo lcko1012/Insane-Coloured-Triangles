@@ -39,8 +39,8 @@ public class MainForm extends JFrame {
 	private JTabbedPane tabbedPane;
 	private JTable table;
 	DefaultTableModel model;
-	boolean checkUpdate = false;
-	boolean checkHistory = false;
+	boolean checkUpdate = false;  // Biến kiểm tra nút "OK" sẽ sử dụng cho việc Tạo mới hay Cập nhật
+	boolean checkHistory = false; // Biến kiểm tra xem tab trước đó truy cập có phải là tab History hay không
 
 	/**
 	 * Launch the application.
@@ -66,12 +66,16 @@ public class MainForm extends JFrame {
 		setBounds(100, 100, 705, 626);
 		setTitle("Insane Coloured Triangles");
 		
+		/**
+		 *  Tạo menubar
+		 */
 		JMenuBar menuBar = new JMenuBar();
 		setJMenuBar(menuBar);
 		
 		JMenu mnFile = new JMenu("File");
 		menuBar.add(mnFile);
 		
+		// Tạo mới nơi nhập xuất dữ liệu
 		JMenuItem mntmNew = new JMenuItem("New");
 		mntmNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -84,6 +88,7 @@ public class MainForm extends JFrame {
 		});
 		mnFile.add(mntmNew);
 		
+		// Thoát chương trình
 		JMenuItem mntmExit = new JMenuItem("Exit");
 		mntmExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -92,6 +97,7 @@ public class MainForm extends JFrame {
 		});
 		mnFile.add(mntmExit);
 		
+		// Hiển thị thông tin của nhóm thực hiện
 		JMenu mnAbout = new JMenu("About");
 		mnAbout.addMouseListener(new MouseAdapter() {
 			@Override
@@ -139,11 +145,11 @@ public class MainForm extends JFrame {
 		
 		//Label chứa hình ảnh minh họa
 		JLabel lblNewLabel_1 = new JLabel("New label");
-		lblNewLabel_1.setIcon(new ImageIcon("D:\\triangles_1.png"));
+		lblNewLabel_1.setIcon(new ImageIcon("triangles_1.png"));
 		lblNewLabel_1.setBounds(175, 123, 319, 276);
 		panelHome.add(lblNewLabel_1);
 		
-		// Button "Start"
+		// Button "Start" dùng để bắt đầu chương trình 
 		JButton btnStart = new JButton("Start");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -155,7 +161,7 @@ public class MainForm extends JFrame {
 		btnStart.setBounds(88, 428, 168, 45);
 		panelHome.add(btnStart);
 		
-		//Button "Exit"
+		//Button "Exit" dùng để thoát chương trình
 		JButton btnExit = new JButton("Exit");
 		btnExit.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -175,6 +181,7 @@ public class MainForm extends JFrame {
 		tabbedPane.addTab("In_Output", null, panelInOut, null);
 		panelInOut.setLayout(null);
 		
+		// Label Input
 		JLabel lblNewLabel_2 = new JLabel("Input");
 		lblNewLabel_2.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblNewLabel_2.setBounds(89, 170, 56, 32);
@@ -187,6 +194,7 @@ public class MainForm extends JFrame {
 		panelInOut.add(tfIn);
 		tfIn.setColumns(10);
 		
+		// Label Output
 		JLabel lblNewLabel_2_1 = new JLabel("Output");
 		lblNewLabel_2_1.setFont(new Font("Tahoma", Font.PLAIN, 20));
 		lblNewLabel_2_1.setBounds(89, 233, 67, 32);
@@ -212,12 +220,17 @@ public class MainForm extends JFrame {
 		btnOK1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				
+				// Kiểm tra dữ liệu đầu vào
+				
+				// Biến kiểm tra xem có lỗi hay không
 				boolean check = true;
 				
+				// Nếu dữ liệu đầu vào rỗng thì bắt lỗi
 				if(tfIn.getText().equals("")) {
 					check = false;
 				}
 				
+				// Nếu dữ liệu đầu vào khác 3 kí tự R, G, B thì bắt lỗi
 				char[] input = tfIn.getText().toCharArray();
 				for(int i = 0; i < input.length; i++) {
 					if(input[i] != 'R' && input[i] != 'G' && input[i] != 'B') {
@@ -226,13 +239,16 @@ public class MainForm extends JFrame {
 					}
 				}
 				
+				// Sau khi kiểm tra các trường hợp lỗi nếu có lỗi thì in ra thông báo
 				if(check == false) {
 					try {
-						throw new Exception("Invalid Input") ;
+						throw new Exception("Dữ liệu vào không hợp lệ\nDữ liệu vào chỉ chứa các kí tự R, G hoặc B") ;
 					}catch(Exception e1) {
 						JOptionPane.showMessageDialog(rootPane, e1.getMessage());
 					}
 				}else {
+					
+					// Nếu không có lỗi thì thực hiện lấy dữ liệu vào và xử lý 
 					InOut io = new InOut();
 					io.setInput(tfIn.getText());
 //					io.Triangle();
@@ -240,10 +256,12 @@ public class MainForm extends JFrame {
 					io.setDTime(Calendar.getInstance().getTime());
 					tfOut.setText(io.getOutput());
 					
+					// Nếu biến kiểm tra Cập nhật = true thì thực hiện việc cập nhật
 					if(checkUpdate == true) {
-						int k = table.getSelectedRow();
+						int k = table.getSelectedRow(); // lấy chỉ số dòng được chọn
 						model = (DefaultTableModel) table.getModel();
 						
+						// Lấy thông tin dòng được chọn
 						InOut io1 = new InOut();
 						io1.setInput(model.getValueAt(k, 1).toString());
 						io1.setOutput(model.getValueAt(k, 2).toString());
@@ -253,6 +271,7 @@ public class MainForm extends JFrame {
 							e1.printStackTrace();
 						}
 						
+						// Chạy thực hiện lại với Input vừa được cập nhật
 						InOut io2 = new InOut();
 						io2.setInput(tfIn.getText());
 //						io2.Triangle();
@@ -260,26 +279,29 @@ public class MainForm extends JFrame {
 						io2.setDTime(Calendar.getInstance().getTime());
 						tfOut.setText(io2.getOutput());
 						
-						
+						// Thực hiện việc Cập nhật vào cơ sở dữ liệu
 						if(new ConnectData().updateInOut(io1, io2) == true) {
-							JOptionPane.showMessageDialog(rootPane, "Update Success!");
+							JOptionPane.showMessageDialog(rootPane, "Update Success!"); // In ra "Update Success!" nếu cập nhật thành công
 						}
-						else JOptionPane.showMessageDialog(rootPane, "Not Success!");
+						else JOptionPane.showMessageDialog(rootPane, "Not Success!");  // In ra "Not Success!" nếu cập nhật thất bại
 						
-						model.setRowCount(0);
+						model.setRowCount(0); // Xóa hết thông tin trong bảng hiện có 
 						
-						ShowData();
+						ShowData();  // Hiển thị lại dữ liệu vừa cập nhật
 						
-						checkUpdate = false;
+						checkUpdate = false;  // Đặt biến kiểm tra cập nhật về false
 						
-						tabbedPane.setSelectedIndex(2);
+						tabbedPane.setSelectedIndex(2); // Quay trở lại tab History
 					}else {
+						
+						// Nếu biến kiểm tra cập nhật = false thì thực hiện việc tạo mới
 						if(new ConnectData().addInOut(io) == true) {
-							JOptionPane.showMessageDialog(rootPane, "Success!");
+							JOptionPane.showMessageDialog(rootPane, "Success!");   // In ra "Success!" nếu tạp mới thành công
 							ShowData();
-						}else JOptionPane.showMessageDialog(rootPane, "Not Success!");
+						}else JOptionPane.showMessageDialog(rootPane, "Not Success!");	// In ra "Not Success!" nếu cập nhật thất bại
 					}
 					
+					// Hiển thị màu là kết quả lên label hiển thị kết quả
 					if(tfOut.getText().equals("R")) {
 						lblResult.setBackground(Color.RED);
 					}else if(tfOut.getText().equals("B")) {
@@ -295,7 +317,7 @@ public class MainForm extends JFrame {
 		btnOK1.setBounds(74, 359, 116, 37);
 		panelInOut.add(btnOK1);
 		
-		// Button "Reset"
+		// Button "Reset" dùng để làm mới lại các Textfield Input, Output
 		JButton btnReset1 = new JButton("Reset");
 		btnReset1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -313,13 +335,15 @@ public class MainForm extends JFrame {
 		JButton btnCancel1 = new JButton("Cancel");
 		btnCancel1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
+				// Nếu biến kiểm tra Tab History = true thì quay trở lại Tab History nếu không thì quay trở lại Tab Home
 				if(checkHistory == true) {
 					tabbedPane.setSelectedIndex(2);
 				}else tabbedPane.setSelectedIndex(0);
 				
-				checkUpdate = false;
-				checkHistory = false;
+				checkUpdate = false;  // Đặt lại biến kiểm tra cập nhật = false
+				checkHistory = false;  // Đặt lại biến kiểm tra Tab History = false
 				
+				// Reset lai hai TextField Input, Output
 				tfIn.setText("");
 				tfOut.setText("");
 				lblResult.setBackground(new Color(153,153,153));
@@ -330,44 +354,52 @@ public class MainForm extends JFrame {
 		btnCancel1.setBounds(488, 359, 116, 37);
 		panelInOut.add(btnCancel1);
 		
+		// Panel chứa tiêu đề
 		JPanel panel_3_1 = new JPanel();
 		panel_3_1.setLayout(null);
 		panel_3_1.setBackground(new Color(204, 204, 204));
 		panel_3_1.setBounds(89, 0, 496, 99);
 		panelInOut.add(panel_3_1);
 		
+		// label chứa tiêu đề
 		JLabel lblNewLabel_4 = new JLabel("Insane Coloured Triangles");
 		lblNewLabel_4.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		lblNewLabel_4.setBounds(93, 13, 299, 73);
 		panel_3_1.add(lblNewLabel_4);
 		
+		// Label chứa chữ "R"
 		JLabel lblNewLabel_3 = new JLabel("R");
 		lblNewLabel_3.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblNewLabel_3.setBounds(193, 308, 28, 16);
 		panelInOut.add(lblNewLabel_3);
 		
+		// Label hiển thị màu đỏ
 		JLabel lblRed = new JLabel("");
 		lblRed.setBounds(218, 309, 40, 16);
 		lblRed.setOpaque(true);
 		lblRed.setBackground(Color.red);
 		panelInOut.add(lblRed);
 		
+		// Label chứa chữ "G"
 		JLabel lblNewLabel_3_1 = new JLabel("G");
 		lblNewLabel_3_1.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblNewLabel_3_1.setBounds(308, 309, 28, 16);
 		panelInOut.add(lblNewLabel_3_1);
 		
+		// Label chứa chữ "B"
 		JLabel lblNewLabel_3_2 = new JLabel("B");
 		lblNewLabel_3_2.setFont(new Font("Tahoma", Font.BOLD, 15));
 		lblNewLabel_3_2.setBounds(423, 309, 28, 16);
 		panelInOut.add(lblNewLabel_3_2);
 		
+		// Label hiển thị màu xanh lá cây
 		JLabel lblGreen = new JLabel("");
 		lblGreen.setBounds(336, 309, 40, 16);
 		lblGreen.setOpaque(true);
 		lblGreen.setBackground(Color.green);
 		panelInOut.add(lblGreen);
 		
+		// Label hiển thị màu xanh da trời
 		JLabel lblBlue = new JLabel("");
 		lblBlue.setBounds(447, 309, 40, 16);
 		lblBlue.setOpaque(true);
@@ -390,15 +422,18 @@ public class MainForm extends JFrame {
 		// Bảng hiển thị lịch sử sử dụng
 		table = new JTable();
 		table.setFont(new Font("Tahoma", Font.PLAIN, 13));
+		// Xử lý sự kiên cho thao tác click chuột vào hàng bất kì trong bảng Lịch sử
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int k = table.getSelectedRow();
+				int k = table.getSelectedRow();		// Lấy index dòng được chọn
 				model = (DefaultTableModel) table.getModel();
 				
+				// Đưa thông tin của dòng được chọn lên hai TextField Input, OutPut
 				tfIn.setText(model.getValueAt(k, 1).toString());
 				tfOut.setText(model.getValueAt(k, 2).toString());
 				
+				// Hiển thông tin Output bằng label hiển thị màu
 				if(tfOut.getText().equals("R")) {
 					lblResult.setBackground(Color.RED);
 				}else if(tfOut.getText().equals("B")) {
@@ -408,6 +443,8 @@ public class MainForm extends JFrame {
 				}
 			}
 		});
+		
+		// Tạo các cột tương ứng các trường dữ liệu
 		table.setModel(new DefaultTableModel(
 			new Object[][] {
 			},
@@ -417,12 +454,14 @@ public class MainForm extends JFrame {
 		));
 		scrollPane.setViewportView(table);
 		
+		// Panel chứa tiêu đề
 		JPanel panel_3_2 = new JPanel();
 		panel_3_2.setLayout(null);
 		panel_3_2.setBackground(new Color(204, 204, 204));
 		panel_3_2.setBounds(88, 0, 496, 99);
 		panelHistory.add(panel_3_2);
 		
+		// Label chưa tên tiêu đề
 		JLabel lblNewLabel_5 = new JLabel("Insane Coloured Triangles");
 		lblNewLabel_5.setFont(new Font("Tahoma", Font.PLAIN, 25));
 		lblNewLabel_5.setBounds(93, 13, 299, 73);
@@ -432,9 +471,9 @@ public class MainForm extends JFrame {
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				checkUpdate = true;
-				checkHistory = true;
-				tabbedPane.setSelectedIndex(1);
+				checkUpdate = true; // Đặt biến kiểm tra cập nhật = true
+				checkHistory = true;  // Đặt biến kiểm tra Tab History = true
+				tabbedPane.setSelectedIndex(1); // Chuyển về Tab In_Output để thực hiện cập nhật dữ liệu
 				
 			}
 		});
@@ -443,7 +482,7 @@ public class MainForm extends JFrame {
 		btnUpdate.setBounds(88, 463, 116, 37);
 		panelHistory.add(btnUpdate);
 		
-		// Button "Cancel"
+		// Button "Cancel" dùng đề quay về Tab In_Output
 		JButton btnCancel2 = new JButton("Cancel");
 		btnCancel2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
@@ -458,13 +497,14 @@ public class MainForm extends JFrame {
 		btnCancel2.setBounds(468, 463, 116, 37);
 		panelHistory.add(btnCancel2);
 		
-		// Button "Delete"
+		// Button "Delete" dùng đề xóa thông tin hiển thị trên bảng lịch sử
 		JButton btnDelete = new JButton("Delete");
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int k = table.getSelectedRow();
+				int k = table.getSelectedRow();		// Lấy index dòng được chọn
 				model = (DefaultTableModel) table.getModel();
 				
+				// Lấy thông tin dòng được chọn
 				InOut io1 = new InOut();
 				io1.setInput(model.getValueAt(k, 1).toString());
 				io1.setOutput(model.getValueAt(k, 2).toString());
@@ -474,14 +514,15 @@ public class MainForm extends JFrame {
 					e1.printStackTrace();
 				}
 				
+				// Thực hiện xóa thông tin
 				if(new ConnectData().deleteInOut(io1) == true) {
-					JOptionPane.showMessageDialog(rootPane, "Delete Success!");
+					JOptionPane.showMessageDialog(rootPane, "Delete Success!"); // In ra "Delete Success!" nếu xóa thành công
 				}
-				else JOptionPane.showMessageDialog(rootPane, "Not Success!");
+				else JOptionPane.showMessageDialog(rootPane, "Not Success!");	// In ra "Not Success!" nếu xóa không thành công
 				
-				model.setRowCount(0);
+				model.setRowCount(0); // Xóa tất cả dữ liệu trong bảng lịch sử
 				
-				ShowData();
+				ShowData(); // Cập nhật lại bảng với thông tin vừa được cập nhật
 			}
 		});
 		btnDelete.setFont(new Font("Tahoma", Font.BOLD, 15));
@@ -489,7 +530,7 @@ public class MainForm extends JFrame {
 		btnDelete.setBounds(279, 463, 116, 37);
 		panelHistory.add(btnDelete);
 		
-		ShowData();
+		ShowData(); // Hiển thị thông tin từ cơ sở dữ liệu khi khởi chạy chương trình
 	}
 	
 	/**
