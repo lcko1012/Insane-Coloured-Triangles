@@ -39,8 +39,11 @@ public class MainForm extends JFrame {
 	private JTabbedPane tabbedPane;
 	private JTable table;
 	DefaultTableModel model;
-	boolean checkUpdate = false;  // Biến kiểm tra nút "OK" sẽ sử dụng cho việc Tạo mới hay Cập nhật
-	boolean checkHistory = false; // Biến kiểm tra xem tab trước đó truy cập có phải là tab History hay không
+	boolean isUpdate = false;
+	boolean isBackHistory = false;
+	static final int indexTabHome = 0;
+	static final int indexTabInOutput = 1;
+	static final int indexTabHistory = 2;
 
 	/**
 	 * Launch the application.
@@ -79,9 +82,9 @@ public class MainForm extends JFrame {
 		JMenuItem mntmNew = new JMenuItem("New");
 		mntmNew.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				checkUpdate = false;
-				checkHistory = false;
-				tabbedPane.setSelectedIndex(1);
+				isUpdate = false;
+				isBackHistory = false;
+				tabbedPane.setSelectedIndex(indexTabInOutput);
 				tfIn.setText("");
 				tfOut.setText("");
 			}
@@ -153,7 +156,7 @@ public class MainForm extends JFrame {
 		JButton btnStart = new JButton("Start");
 		btnStart.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				tabbedPane.setSelectedIndex(1);
+				tabbedPane.setSelectedIndex(indexTabInOutput);
 			}
 		});
 		btnStart.setBackground(new Color(204, 204, 204));
@@ -223,28 +226,28 @@ public class MainForm extends JFrame {
 				// Kiểm tra dữ liệu đầu vào
 				
 				// Biến kiểm tra xem có lỗi hay không
-				boolean check = true;
+				boolean isInputError = false;
 				
 				// Nếu dữ liệu đầu vào rỗng thì bắt lỗi
 				if(tfIn.getText().equals("")) {
-					check = false;
+					isInputError = true;
 				}
 				
 				// Nếu dữ liệu đầu vào khác 3 kí tự R, G, B thì bắt lỗi
 				char[] input = tfIn.getText().toCharArray();
 				for(int i = 0; i < input.length; i++) {
 					if(input[i] != 'R' && input[i] != 'G' && input[i] != 'B') {
-						check = false;
+						isInputError = true;
 						break;
 					}
 				}
 				
 				// Sau khi kiểm tra các trường hợp lỗi nếu có lỗi thì in ra thông báo
-				if(check == false) {
+				if(isInputError == true) {
 					try {
 						throw new Exception("Dữ liệu vào không hợp lệ\nDữ liệu vào chỉ chứa các kí tự R, G hoặc B") ;
 					}catch(Exception e1) {
-						JOptionPane.showMessageDialog(rootPane, e1.getMessage());
+						JOptionPane.showMessageDialog(rootPane, e1.getMessage(), "Thông báo", JOptionPane.WARNING_MESSAGE);
 					}
 				}else {
 					
@@ -257,7 +260,7 @@ public class MainForm extends JFrame {
 					tfOut.setText(io.getOutput());
 					
 					// Nếu biến kiểm tra Cập nhật = true thì thực hiện việc cập nhật
-					if(checkUpdate == true) {
+					if(isUpdate == true) {
 						int k = table.getSelectedRow(); // lấy chỉ số dòng được chọn
 						model = (DefaultTableModel) table.getModel();
 						
@@ -281,24 +284,26 @@ public class MainForm extends JFrame {
 						
 						// Thực hiện việc Cập nhật vào cơ sở dữ liệu
 						if(new ConnectData().updateInOut(io1, io2) == true) {
-							JOptionPane.showMessageDialog(rootPane, "Update Success!"); // In ra "Update Success!" nếu cập nhật thành công
+							JOptionPane.showMessageDialog(rootPane, "Update Success!", "Thông báo", JOptionPane.WARNING_MESSAGE);
 						}
-						else JOptionPane.showMessageDialog(rootPane, "Not Success!");  // In ra "Not Success!" nếu cập nhật thất bại
+						else JOptionPane.showMessageDialog(rootPane, "Not Success!", "Thông báo", JOptionPane.WARNING_MESSAGE);
 						
 						model.setRowCount(0); // Xóa hết thông tin trong bảng hiện có 
 						
 						ShowData();  // Hiển thị lại dữ liệu vừa cập nhật
 						
-						checkUpdate = false;  // Đặt biến kiểm tra cập nhật về false
+						isUpdate = false;  // Đặt biến kiểm tra cập nhật về false
 						
-						tabbedPane.setSelectedIndex(2); // Quay trở lại tab History
+						tabbedPane.setSelectedIndex(indexTabHistory); // Quay trở lại tab History
+						
+						
 					}else {
 						
 						// Nếu biến kiểm tra cập nhật = false thì thực hiện việc tạo mới
 						if(new ConnectData().addInOut(io) == true) {
-							JOptionPane.showMessageDialog(rootPane, "Success!");   // In ra "Success!" nếu tạp mới thành công
+							JOptionPane.showMessageDialog(rootPane, "Success!", "Thông báo", JOptionPane.WARNING_MESSAGE);
 							ShowData();
-						}else JOptionPane.showMessageDialog(rootPane, "Not Success!");	// In ra "Not Success!" nếu cập nhật thất bại
+						}else JOptionPane.showMessageDialog(rootPane, "Not Success!", "Thông báo", JOptionPane.WARNING_MESSAGE);
 					}
 					
 					// Hiển thị màu là kết quả lên label hiển thị kết quả
@@ -336,12 +341,12 @@ public class MainForm extends JFrame {
 		btnCancel1.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
 				// Nếu biến kiểm tra Tab History = true thì quay trở lại Tab History nếu không thì quay trở lại Tab Home
-				if(checkHistory == true) {
-					tabbedPane.setSelectedIndex(2);
-				}else tabbedPane.setSelectedIndex(0);
+				if(isBackHistory == true) {
+					tabbedPane.setSelectedIndex(indexTabHistory);
+				}else tabbedPane.setSelectedIndex(indexTabHome);
 				
-				checkUpdate = false;  // Đặt lại biến kiểm tra cập nhật = false
-				checkHistory = false;  // Đặt lại biến kiểm tra Tab History = false
+				isUpdate = false;  // Đặt lại biến kiểm tra cập nhật = false
+				isBackHistory = false;  // Đặt lại biến kiểm tra Tab History = false
 				
 				// Reset lai hai TextField Input, Output
 				tfIn.setText("");
@@ -471,9 +476,17 @@ public class MainForm extends JFrame {
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				checkUpdate = true; // Đặt biến kiểm tra cập nhật = true
-				checkHistory = true;  // Đặt biến kiểm tra Tab History = true
-				tabbedPane.setSelectedIndex(1); // Chuyển về Tab In_Output để thực hiện cập nhật dữ liệu
+				int k = table.getSelectedRow();		// Lấy index dòng được chọn
+				model = (DefaultTableModel) table.getModel();
+				
+				if(k < 0) {
+					JOptionPane.showMessageDialog(rootPane, "Bạn chưa chọn dữ liệu\nHãy chọn dữ liệu!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+				}
+				else {
+					isUpdate = true; // Đặt biến kiểm tra cập nhật = true
+					isBackHistory = true;  // Đặt biến kiểm tra Tab History = true
+					tabbedPane.setSelectedIndex(indexTabInOutput); // Chuyển về Tab In_Output để thực hiện cập nhật dữ liệu
+				}
 				
 			}
 		});
@@ -482,11 +495,11 @@ public class MainForm extends JFrame {
 		btnUpdate.setBounds(88, 463, 116, 37);
 		panelHistory.add(btnUpdate);
 		
-		// Button "Cancel" dùng đề quay về Tab In_Output
+		// Button "Cancel" dùng để quay về Tab In_Output
 		JButton btnCancel2 = new JButton("Cancel");
 		btnCancel2.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				tabbedPane.setSelectedIndex(1);
+				tabbedPane.setSelectedIndex(indexTabInOutput);
 				tfIn.setText("");
 				tfOut.setText("");
 				lblResult.setBackground(new Color(153,153,153));
@@ -504,25 +517,35 @@ public class MainForm extends JFrame {
 				int k = table.getSelectedRow();		// Lấy index dòng được chọn
 				model = (DefaultTableModel) table.getModel();
 				
-				// Lấy thông tin dòng được chọn
-				InOut io1 = new InOut();
-				io1.setInput(model.getValueAt(k, 1).toString());
-				io1.setOutput(model.getValueAt(k, 2).toString());
-				try {
-					io1.setDTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getValueAt(k, 3).toString()));
-				} catch (ParseException e1) {
-					e1.printStackTrace();
+				// Kiểm tra xem đã chọn dữ liệu hay chưa
+				if(k < 0) {
+					JOptionPane.showMessageDialog(rootPane, "Bạn chưa chọn dữ liệu\nHãy chọn dữ liệu!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+				}
+				else {
+					// Lấy thông tin dòng được chọn
+					InOut io1 = new InOut();
+					io1.setInput(model.getValueAt(k, 1).toString());
+					io1.setOutput(model.getValueAt(k, 2).toString());
+					try {
+						io1.setDTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getValueAt(k, 3).toString()));
+					} catch (ParseException e1) {
+						e1.printStackTrace();
+					}
+					
+					// Thực hiện xóa thông tin
+					int a = JOptionPane.showConfirmDialog(rootPane, "Bạn có chắc chắn xóa?");
+					if(a == JOptionPane.YES_OPTION) {
+						if(new ConnectData().deleteInOut(io1) == true) {
+							JOptionPane.showMessageDialog(rootPane, "Delete Success!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+						}
+						else JOptionPane.showMessageDialog(rootPane, "Not Success!", "Thông báo", JOptionPane.WARNING_MESSAGE);
+						
+						model.setRowCount(0); // Xóa tất cả dữ liệu trong bảng lịch sử
+						
+						ShowData(); // Cập nhật lại bảng với thông tin vừa được cập nhật
+					}
 				}
 				
-				// Thực hiện xóa thông tin
-				if(new ConnectData().deleteInOut(io1) == true) {
-					JOptionPane.showMessageDialog(rootPane, "Delete Success!"); // In ra "Delete Success!" nếu xóa thành công
-				}
-				else JOptionPane.showMessageDialog(rootPane, "Not Success!");	// In ra "Not Success!" nếu xóa không thành công
-				
-				model.setRowCount(0); // Xóa tất cả dữ liệu trong bảng lịch sử
-				
-				ShowData(); // Cập nhật lại bảng với thông tin vừa được cập nhật
 			}
 		});
 		btnDelete.setFont(new Font("Tahoma", Font.BOLD, 15));
