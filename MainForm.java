@@ -109,7 +109,7 @@ public class MainForm extends JFrame {
 						+ "Nhóm 5 (Lớp 18TCLC Nhật)\n"
 						+ "Đề tài: Insane Triangle Colours\n"
 						+ "Thành viên:  Nguyễn Thanh Dũng\n"
-						+ "                       Lê Cảnh Kiều Oanh");
+						+ "                       Lê Cảnh Kiều Oanh", "About", JOptionPane.INFORMATION_MESSAGE);
 			}
 		});
 		menuBar.add(mnAbout);
