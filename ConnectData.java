@@ -88,14 +88,15 @@ public class ConnectData {
 		 * @return
 		 */
 		public boolean updateInOut(InOut io1, InOut io2) {
-			String sql = "UPDATE tbldata1 SET Input = ?, Output = ?, DateTime = ?"
-					+ " WHERE Input = '"+io1.getInput()+"' AND Output = '"+io1.getOutput()+"' "
-					+ "AND DateTime = '"+new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(io1.getDTime())+"'";
+			String sql = "UPDATE tbldata1 SET Input = ?, Output = ?, DateTime = ? WHERE Input = ? AND Output = ? AND DateTime = ?";
 			try {
 				PreparedStatement ps = connect.prepareStatement(sql);
 				ps.setString(1, io2.getInput());
 				ps.setString(2, io2.getOutput());
 				ps.setString(3, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(io2.getDTime()));
+				ps.setString(4, io1.getInput());
+				ps.setString(5, io1.getOutput());
+				ps.setString(6, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(io1.getDTime()));
 				return ps.executeUpdate() > 0;
 				
 			} catch (SQLException e) {
