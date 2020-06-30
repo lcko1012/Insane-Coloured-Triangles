@@ -109,9 +109,6 @@ public class Insane_Coloured_Triangles {
 		ArrayList<Integer> dig_n = getRepresentation(n-1);
 		int sum = 0;
 		
-		//Biến kiểm tra kí tự nhập sai
-		int kt = 1;
-		
 		for(int k = 0; k < n; k++) {
 			//Tính k0,k1..
 			ArrayList<Integer> dig_k = getRepresentation(k);
@@ -119,35 +116,17 @@ public class Insane_Coloured_Triangles {
 			int Cnk_mod3 = Lucas(dig_n,dig_k);
 			int a = char_2_int(input[k]);
 			
-			//Kí tự nhập không phải là RGB, trả về k = 0;
-			if(a == 3) {
-				kt = 0;
-				break;
-			}
 			sum = (sum + Cnk_mod3 * a) %3;
 		}
 		
-		if(kt==0) {
-			return '0';
-		}
+
 		//kiểm tra (-1)^n-1 
 		int sign = (n%2)*2-1;
 		//Sử dụng công thức (2)
 		int sum_mod3 = (3+(sign*(int)(sum%3))) %3;
+		
 		return int_2_char(sum_mod3);
 	}
 	
-	public static void main(String[] args) throws IOException {
-		
-		String path = "C:\\Users\\Admin\\Desktop\\Testcase\\length1000\\l_999.txt";
-		String row = Files.readString(Paths.get(path), StandardCharsets.US_ASCII);
-		String row1 = "RGBRGB";
-		if(Triangle(row) == '0')
-		{
-			System.out.print("Nhap sai ki tu vao!!");
-		}
-		else {
-			System.out.print(Triangle(row));
-		}
-	}
+	
 }
