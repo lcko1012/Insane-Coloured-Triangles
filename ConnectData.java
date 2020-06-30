@@ -22,13 +22,15 @@ public class ConnectData {
 	 */
 	public ConnectData() {
 		
-		final String url = "jdbc:mysql://localhost:3306/test";
-		final String user = "root";
+		final String hostName = "localhost";
+		final String dbName = "test";
+		final String userName = "root";
 		final String password = "123456789";
 		
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
-			connect = DriverManager.getConnection(url, user, password);
+			String connectionURL = "jdbc:mysql://" + hostName + ":3306/" + dbName;
+			connect = DriverManager.getConnection(connectionURL, userName, password);
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
@@ -42,10 +44,10 @@ public class ConnectData {
 	 * @param tableModel
 	 */
 	public void GetData(JTable table,DefaultTableModel tableModel) {
-		String sql = "SELECT * FROM tbldata1 WHERE Flag = 1";	// Câu truy vấn dùng để hiển thị những thông tin có trường Flag = 1 
+		String sqlGetData = "SELECT * FROM in_out WHERE Flag = 1";	// Câu truy vấn dùng để hiển thị những thông tin có trường Flag = 1 
 																// (Flag là trường hiển thị dữ liệu được phép hiện trên bảng lịch sử hay không)
 		try {
-			PreparedStatement sm = connect.prepareStatement(sql);
+			PreparedStatement sm = connect.prepareStatement(sqlGetData);
 			ResultSet rs = sm.executeQuery();
 			int i = 1; // Biến i dùng để đánh số thự tự các bản ghi
 			while(rs.next()) {
@@ -68,9 +70,9 @@ public class ConnectData {
 	 * @return
 	 */
 		public boolean addInOut(InOut io) {
-			String sql = "INSERT INTO tbldata1() VALUES(?, ?, ?, 1)";
+			String sqlInsertData = "INSERT INTO in_out() VALUES(?, ?, ?, 1)";
 			try {
-				PreparedStatement ps = connect.prepareStatement(sql);
+				PreparedStatement ps = connect.prepareStatement(sqlInsertData);
 				ps.setString(1, io.getInput());
 				ps.setString(2, io.getOutput());
 				ps.setString(3, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(io.getDTime()));
@@ -88,9 +90,9 @@ public class ConnectData {
 		 * @return
 		 */
 		public boolean updateInOut(InOut io1, InOut io2) {
-			String sql = "UPDATE tbldata1 SET Input = ?, Output = ?, DateTime = ? WHERE Input = ? AND Output = ? AND DateTime = ?";
+			String sqlUpdateData = "UPDATE in_out SET Input = ?, Output = ?, DateTime = ? WHERE Input = ? AND Output = ? AND DateTime = ?";
 			try {
-				PreparedStatement ps = connect.prepareStatement(sql);
+				PreparedStatement ps = connect.prepareStatement(sqlUpdateData);
 				ps.setString(1, io2.getInput());
 				ps.setString(2, io2.getOutput());
 				ps.setString(3, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(io2.getDTime()));
@@ -112,9 +114,9 @@ public class ConnectData {
 		 * @return
 		 */
 		public boolean deleteInOut(InOut io) {
-			String sql = "UPDATE tbldata1 SET Flag = 0 WHERE Input = ? and Output = ? and DateTime = ?";
+			String sqlDeleteData = "UPDATE in_out SET Flag = 0 WHERE Input = ? and Output = ? and DateTime = ?";
 			try {
-				PreparedStatement ps = connect.prepareStatement(sql);
+				PreparedStatement ps = connect.prepareStatement(sqlDeleteData);
 				ps.setString(1, io.getInput());
 				ps.setString(2, io.getOutput());
 				ps.setString(3, new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").format(io.getDTime()));
