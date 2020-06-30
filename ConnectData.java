@@ -25,7 +25,7 @@ public class ConnectData {
 		final String hostName = "localhost";
 		final String dbName = "test";
 		final String userName = "root";
-		final String password = "123456789";
+		final String password = "Thanhdung1";
 		
 		try {
 			Class.forName("com.mysql.jdbc.Driver");
