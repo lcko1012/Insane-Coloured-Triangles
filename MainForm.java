@@ -225,7 +225,6 @@ public class MainForm extends JFrame {
 				
 				// Kiểm tra dữ liệu đầu vào
 				
-				// Biến kiểm tra xem có lỗi hay không
 				boolean isInputError = false;
 				
 				// Nếu dữ liệu đầu vào rỗng thì bắt lỗi
@@ -261,15 +260,15 @@ public class MainForm extends JFrame {
 					
 					// Nếu biến kiểm tra Cập nhật = true thì thực hiện việc cập nhật
 					if(isUpdate == true) {
-						int k = table.getSelectedRow(); // lấy chỉ số dòng được chọn
+						int indexSelectedRow = table.getSelectedRow(); 
 						model = (DefaultTableModel) table.getModel();
 						
 						// Lấy thông tin dòng được chọn
 						InOut io1 = new InOut();
-						io1.setInput(model.getValueAt(k, 1).toString());
-						io1.setOutput(model.getValueAt(k, 2).toString());
+						io1.setInput(model.getValueAt(indexSelectedRow, 1).toString());
+						io1.setOutput(model.getValueAt(indexSelectedRow, 2).toString());
 						try {
-							io1.setDTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getValueAt(k, 3).toString()));
+							io1.setDTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getValueAt(indexSelectedRow, 3).toString()));
 						} catch (ParseException e1) {
 							e1.printStackTrace();
 						}
@@ -290,9 +289,9 @@ public class MainForm extends JFrame {
 						
 						model.setRowCount(0); // Xóa hết thông tin trong bảng hiện có 
 						
-						ShowData();  // Hiển thị lại dữ liệu vừa cập nhật
+						ShowDataFromDatabase();  
 						
-						isUpdate = false;  // Đặt biến kiểm tra cập nhật về false
+						isUpdate = false;  
 						
 						tabbedPane.setSelectedIndex(indexTabHistory); // Quay trở lại tab History
 						
@@ -302,7 +301,7 @@ public class MainForm extends JFrame {
 						// Nếu biến kiểm tra cập nhật = false thì thực hiện việc tạo mới
 						if(new ConnectData().addInOut(io) == true) {
 							JOptionPane.showMessageDialog(rootPane, "Success!", "Thông báo", JOptionPane.WARNING_MESSAGE);
-							ShowData();
+							ShowDataFromDatabase();
 						}else JOptionPane.showMessageDialog(rootPane, "Not Success!", "Thông báo", JOptionPane.WARNING_MESSAGE);
 					}
 					
@@ -345,8 +344,8 @@ public class MainForm extends JFrame {
 					tabbedPane.setSelectedIndex(indexTabHistory);
 				}else tabbedPane.setSelectedIndex(indexTabHome);
 				
-				isUpdate = false;  // Đặt lại biến kiểm tra cập nhật = false
-				isBackHistory = false;  // Đặt lại biến kiểm tra Tab History = false
+				isUpdate = false;  
+				isBackHistory = false;  
 				
 				// Reset lai hai TextField Input, Output
 				tfIn.setText("");
@@ -431,12 +430,12 @@ public class MainForm extends JFrame {
 		table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				int k = table.getSelectedRow();		// Lấy index dòng được chọn
+				int indexSelectedRow = table.getSelectedRow();
 				model = (DefaultTableModel) table.getModel();
 				
 				// Đưa thông tin của dòng được chọn lên hai TextField Input, OutPut
-				tfIn.setText(model.getValueAt(k, 1).toString());
-				tfOut.setText(model.getValueAt(k, 2).toString());
+				tfIn.setText(model.getValueAt(indexSelectedRow, 1).toString());
+				tfOut.setText(model.getValueAt(indexSelectedRow, 2).toString());
 				
 				// Hiển thông tin Output bằng label hiển thị màu
 				if(tfOut.getText().equals("R")) {
@@ -476,15 +475,15 @@ public class MainForm extends JFrame {
 		JButton btnUpdate = new JButton("Update");
 		btnUpdate.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int k = table.getSelectedRow();		// Lấy index dòng được chọn
+				int indexSelectedRow = table.getSelectedRow();
 				model = (DefaultTableModel) table.getModel();
 				
-				if(k < 0) {
+				if(indexSelectedRow < 0) {
 					JOptionPane.showMessageDialog(rootPane, "Bạn chưa chọn dữ liệu\nHãy chọn dữ liệu!", "Thông báo", JOptionPane.WARNING_MESSAGE);
 				}
 				else {
-					isUpdate = true; // Đặt biến kiểm tra cập nhật = true
-					isBackHistory = true;  // Đặt biến kiểm tra Tab History = true
+					isUpdate = true; 
+					isBackHistory = true;  
 					tabbedPane.setSelectedIndex(indexTabInOutput); // Chuyển về Tab In_Output để thực hiện cập nhật dữ liệu
 				}
 				
@@ -514,27 +513,27 @@ public class MainForm extends JFrame {
 		JButton btnDelete = new JButton("Delete");
 		btnDelete.addActionListener(new ActionListener() {
 			public void actionPerformed(ActionEvent e) {
-				int k = table.getSelectedRow();		// Lấy index dòng được chọn
+				int indexSelectedRow = table.getSelectedRow();
 				model = (DefaultTableModel) table.getModel();
 				
 				// Kiểm tra xem đã chọn dữ liệu hay chưa
-				if(k < 0) {
+				if(indexSelectedRow < 0) {
 					JOptionPane.showMessageDialog(rootPane, "Bạn chưa chọn dữ liệu\nHãy chọn dữ liệu!", "Thông báo", JOptionPane.WARNING_MESSAGE);
 				}
 				else {
 					// Lấy thông tin dòng được chọn
 					InOut io1 = new InOut();
-					io1.setInput(model.getValueAt(k, 1).toString());
-					io1.setOutput(model.getValueAt(k, 2).toString());
+					io1.setInput(model.getValueAt(indexSelectedRow, 1).toString());
+					io1.setOutput(model.getValueAt(indexSelectedRow, 2).toString());
 					try {
-						io1.setDTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getValueAt(k, 3).toString()));
+						io1.setDTime(new SimpleDateFormat("yyyy-MM-dd HH:mm:ss").parse(model.getValueAt(indexSelectedRow, 3).toString()));
 					} catch (ParseException e1) {
 						e1.printStackTrace();
 					}
 					
 					// Thực hiện xóa thông tin
-					int a = JOptionPane.showConfirmDialog(rootPane, "Bạn có chắc chắn xóa?");
-					if(a == JOptionPane.YES_OPTION) {
+					int yesOption = JOptionPane.showConfirmDialog(rootPane, "Bạn có chắc chắn xóa?");
+					if(yesOption == JOptionPane.YES_OPTION) {
 						if(new ConnectData().deleteInOut(io1) == true) {
 							JOptionPane.showMessageDialog(rootPane, "Delete Success!", "Thông báo", JOptionPane.WARNING_MESSAGE);
 						}
@@ -542,7 +541,7 @@ public class MainForm extends JFrame {
 						
 						model.setRowCount(0); // Xóa tất cả dữ liệu trong bảng lịch sử
 						
-						ShowData(); // Cập nhật lại bảng với thông tin vừa được cập nhật
+						ShowDataFromDatabase(); 
 					}
 				}
 				
@@ -553,14 +552,14 @@ public class MainForm extends JFrame {
 		btnDelete.setBounds(279, 463, 116, 37);
 		panelHistory.add(btnDelete);
 		
-		ShowData(); // Hiển thị thông tin từ cơ sở dữ liệu khi khởi chạy chương trình
+		ShowDataFromDatabase(); 
 	}
 	
 	/**
-	 * Hàm hiển thị dữ liệu từ cơ sở dữ liệu khi chạy chương trình
+	 * Hàm hiển thị dữ liệu từ cơ sở dữ liệu
 	 */
 	
-	public void ShowData() {
+	public void ShowDataFromDatabase() {
 		model = (DefaultTableModel) table.getModel();
 		ConnectData cndt = new ConnectData();
 		cndt.GetData(table, model);
