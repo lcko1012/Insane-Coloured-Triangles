@@ -108,7 +108,8 @@ public class Insane_Coloured_Triangles {
 		//Mảng chứa các số nguyên modulo 3 của n: n0,n1..
 		ArrayList<Integer> dig_n = getRepresentation(n-1);
 		int sum = 0;
-	
+		
+		
 		for(int k = 0; k < n; k++) {
 			//Tính k0,k1..
 			ArrayList<Integer> dig_k = getRepresentation(k);
@@ -116,13 +117,15 @@ public class Insane_Coloured_Triangles {
 			int Cnk_mod3 = Lucas(dig_n,dig_k);
 			int a = char_2_int(input[k]);
 			
+			
 			sum = (sum + Cnk_mod3 * a) %3;
 		}
-	
+		
 		
 		int sign = (n%2)*2-1;
 		//Sử dụng công thức (2)
 		int sum_mod3 = (3+(sign*(int)(sum%3))) %3;
 		return int_2_char(sum_mod3);
 	}
+	
 }
